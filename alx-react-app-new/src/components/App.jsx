@@ -5,6 +5,7 @@ import Footer from './Footer';
 import UserProfile from './UserProfile';
 import { useState } from 'react';
 import './App.css'
+import Counter from './Counter';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
                    age="25"
                    bio="Loves hiking and photography"
       />
+      <Counter />
     </>
   )
 }
