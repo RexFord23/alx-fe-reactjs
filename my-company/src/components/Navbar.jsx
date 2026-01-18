@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
     return ( 
-        <nav>
+        <nav style={{backgroundColor: "white"}}>
             <ul style={
                 {display: "flex", justifyContent: "space-between",
                 listStyle: "none", marginLeft: "1400px", gap: "20px"
