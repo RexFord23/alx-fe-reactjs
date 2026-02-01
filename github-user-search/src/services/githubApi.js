@@ -7,4 +7,7 @@ const api = axios.create({
   },
 });
 
-export default api;
+export const fetchUserData = async (username) => {
+  const response = await api.get(`/users/${username}`);
+  return response.data;
+};
