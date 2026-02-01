@@ -4,11 +4,12 @@ import { fetchAdvancedUsers } from "../services/githubService";
 const Search = () => {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
-  const [repos, setRepos] = useState("");
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [minRepos, setMinRepos] = useState("");
+
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -21,7 +22,7 @@ const Search = () => {
       const data = await fetchAdvancedUsers({
         username,
         location,
-        repos,
+        minRepos,
         page: 1,
       });
       setUsers(data.items);
@@ -69,7 +70,7 @@ const Search = () => {
           type="number"
           placeholder="Minimum repositories"
           value={repos}
-          onChange={(e) => setRepos(e.target.value)}
+          onChange={(e) => setMinRepos(e.target.value)}
           className="border p-2"
         />
 
