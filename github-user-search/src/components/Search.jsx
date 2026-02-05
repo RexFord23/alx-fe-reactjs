@@ -1,17 +1,42 @@
 import { useState } from "react";
-import { fetchAdvancedUsers } from "../services/githubService";
+import {
+  fetchUserData,
+  fetchAdvancedUsers,
+} from "../services/githubService";
 
 const Search = () => {
+  /* ===== BASIC SEARCH ===== */
   const [username, setUsername] = useState("");
+  const [user, setUser] = useState(null);
+
+  /* ===== ADVANCED SEARCH ===== */
   const [location, setLocation] = useState("");
+  const [minRepos, setMinRepos] = useState("");
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [minRepos, setMinRepos] = useState("");
 
+  /* ===== BASIC SEARCH HANDLER ===== */
+  const handleBasicSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setUser(null);
 
-  const handleSearch = async (e) => {
+    try {
+      const data = await fetchUserData(username);
+      setUser(data);
+    } catch {
+      setError("Looks like we cant find the user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ===== ADVANCED SEARCH HANDLER ===== */
+  const handleAdvancedSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -40,7 +65,7 @@ const Search = () => {
     const data = await fetchAdvancedUsers({
       username,
       location,
-      repos,
+      minRepos,
       page: nextPage,
     });
 
@@ -49,71 +74,77 @@ const Search = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <form onSubmit={handleSearch} className="grid gap-3">
+      {/* ===== BASIC SEARCH FORM (TASK 1) ===== */}
+      <form onSubmit={handleBasicSearch} className="mb-6 space-y-2">
         <input
           type="text"
-          placeholder="Username"
+          placeholder="Search GitHub username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="border p-2"
+          className="w-full border p-2"
         />
+        <button className="w-full bg-black text-white p-2">
+          Basic Search
+        </button>
+      </form>
 
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
+      {user && (
+        <div className="border p-4 mb-6">
+          <img src={user.avatar_url} className="w-20" />
+          <h3>{user.name || user.login}</h3>
+          <a href={user.html_url} target="_blank">
+            View Profile
+          </a>
+        </div>
+      )}
+
+      {/* ===== ADVANCED SEARCH FORM (TASK 2) ===== */}
+      <form onSubmit={handleAdvancedSearch} className="space-y-2">
         <input
           type="text"
           placeholder="Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="border p-2"
+          className="w-full border p-2"
         />
-
         <input
           type="number"
           placeholder="Minimum repositories"
-          value={repos}
+          value={minRepos}
           onChange={(e) => setMinRepos(e.target.value)}
-          className="border p-2"
+          className="w-full border p-2"
         />
-
-        <button className="bg-black text-white p-2">
-          Search
+        <button className="w-full bg-gray-800 text-white p-2">
+          Advanced Search
         </button>
       </form>
 
-      {loading && <p className="mt-4">Loading...</p>}
-      {error && <p className="mt-4 text-red-500">{error}</p>}
-
-      {/* ✅ Enhanced results display */}
+      {/* ===== ADVANCED RESULTS ===== */}
       <div className="mt-6 space-y-4">
-        {users.map((user) => (
-          <div
-            key={user.id}
-            className="border p-4 flex items-center gap-4"
-          >
-            <img
-              src={user.avatar_url}
-              alt={user.login}
-              className="w-16 h-16 rounded-full"
-            />
+        {users.map((u) => (
+          <div key={u.id} className="border p-3 flex gap-4">
+            <img src={u.avatar_url} className="w-14 h-14" />
             <div>
-              <p className="font-semibold">{user.login}</p>
+              <p className="font-bold">{u.login}</p>
               <a
-                href={user.html_url}
+                href={u.html_url}
                 target="_blank"
-                rel="noreferrer"
                 className="text-blue-600"
               >
-                View GitHub Profile
+                View Profile
               </a>
             </div>
           </div>
         ))}
       </div>
 
-      {/* ✅ Pagination / Load more */}
       {users.length > 0 && (
         <button
           onClick={loadMore}
-          className="mt-6 w-full border p-2"
+          className="w-full mt-4 border p-2"
         >
           Load More
         </button>
