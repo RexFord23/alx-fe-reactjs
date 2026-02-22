@@ -1,42 +1,32 @@
-import { useState } from react;
+import { useState } from "react";
 
 const RegistrationForm = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const validate = () => {
     let newErrors = {};
 
-    if (!formData.username) newErrors.username = "Username is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.password) newErrors.password = "Password is required";
+    if (!username) newErrors.username = "Username is required";
+    if (!email) newErrors.email = "Email is required";
+    if (!password) newErrors.password = "Password is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-   const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validate()) {
-      console.log("Form Submitted:", formData);
+      console.log("Form Submitted:", { username, email, password });
 
-      // Simulate API call
       fetch("https://jsonplaceholder.typicode.com/posts", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ username, email, password }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -55,8 +45,8 @@ const RegistrationForm = () => {
           type="text"
           name="username"
           placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         {errors.username && <p>{errors.username}</p>}
       </div>
@@ -66,8 +56,8 @@ const RegistrationForm = () => {
           type="email"
           name="email"
           placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         {errors.email && <p>{errors.email}</p>}
       </div>
@@ -77,8 +67,8 @@ const RegistrationForm = () => {
           type="password"
           name="password"
           placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
         {errors.password && <p>{errors.password}</p>}
       </div>
