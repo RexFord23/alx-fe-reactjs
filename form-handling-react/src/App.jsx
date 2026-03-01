@@ -6,7 +6,7 @@ function App() {
     <>
       <RegistrationForm />
       <hr />
-      <FormikForm />
+      <formikForm />
     </>
   );
 }
